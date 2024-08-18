@@ -48,7 +48,7 @@ Here is an example of the kind of image this project generates:
 
 ![Example Image](examples/out83.png)
 
-Feel free to explore the `examples` folder for more visualizations.
+Feel free to explore the [examples](examples) folder for more visualizations.
 
 ## References
 
