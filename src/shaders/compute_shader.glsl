@@ -7,20 +7,17 @@ layout(binding = 0, rgba32f) uniform image2D img_output;
 #define PI 3.14159265359
 
 // ------------------------------- UNIFORMS ------------------------------- //
-uniform vec2 resolution;
 uniform float camera_distance;
-uniform mat3 rotation_matrix;
-uniform sampler2D ring;
-uniform vec3 camera_origin;
-uniform bool camera_type;
-uniform bool show_ring;
-uniform bool use_sphere_texture;
+uniform vec3  camera_origin;
+uniform bool  camera_type;
 uniform float focal_length;
+uniform vec2  resolution;
+uniform mat3  rotation_matrix;
+uniform bool  show_ring;
 
-
-//Things we need:
+// Scene settings
 const float DELTA = 0.001;
-const float INVERSE_SKY_DISTANCE = 1.0 / 1e10;
+const float inverse_sky_distance = 1.0 / 1e10;
 const float inverse_inner_radius = 1.0 / 15.0;
 const float inverse_outer_radius = 1.0 / 50.0;
 const vec3 disk_normal = vec3(0, 0, 1);
@@ -112,7 +109,7 @@ void main()
         final_direction = normalize(RotateByAxis(camera_origin, axis_rotation, phi)) / u;
 
         // Ray escapes to infinity
-        if (u < INVERSE_SKY_DISTANCE)
+        if (u < inverse_sky_distance)
         {
 		    vec2 sphere_uv = sphereUV(final_direction);
 		    px_color = gridTexture(sphere_uv, vec2(92.0, 92.0*0.5), white, pink);
