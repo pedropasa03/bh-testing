@@ -56,7 +56,7 @@ compute_shader['focal_length'].value = focal_length
 # Run the compute shader
 compute_shader.run(size[0] // 30, size[1] // 30)
 
-# Now, output_texture contains the result, which you can use or save as an image
+# Now, output_texture contains the result, which is used to save as an image
 data = output_texture.read()
 image = np.frombuffer(data, dtype=np.float32).reshape((size[1], size[0], 4))
 
