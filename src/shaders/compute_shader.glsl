@@ -32,9 +32,9 @@ float distance_inverse = 1.0 / camera_distance;
 // ------------------------------- FUNCTIONS ------------------------------- //
 vec4 gridTexture(vec2 uv, vec2 num, vec4 color1, vec4 color2)
 {
-	int i = int(num.x*uv.x) % int(num.x+1.0);
-	int j = int(num.y*uv.y) % int(num.y+1.0);
-	
+    int i = int(num.x*uv.x) % int(num.x+1.0);
+    int j = int(num.y*uv.y) % int(num.y+1.0);
+    
     return ((i + j) % 2 == 0) ? color1 : color2;
 }
 
@@ -50,13 +50,13 @@ vec3 RotateByAxis(vec3 vector, vec3 axis_rotation, float theta)
 
 float VectorAngle(vec3 vector1, vec3 vector2)
 {
-	return acos(dot(vector1, vector2) / (length(vector1)*length(vector2)));
+    return acos(dot(vector1, vector2) / (length(vector1)*length(vector2)));
 }
 
 /*Calculate angle between two unit vectors*/
 float UnitVectorAngle(vec3 vector1, vec3 vector2)
 {
-	return acos(dot(vector1, vector2));
+    return acos(dot(vector1, vector2));
 }
 
 vec2 diskUV(vec3 point, float outer_radius, float inner_radius)
@@ -66,11 +66,11 @@ vec2 diskUV(vec3 point, float outer_radius, float inner_radius)
 
 vec2 sphereUV(vec3 direction)
 {
-	direction = normalize(direction);
-	float u = 0.5 + atan(direction.y, direction.x)/(2.0*PI);
-	float v = 0.5 + asin(direction.z)/PI;
+    direction = normalize(direction);
+    float u = 0.5 + atan(direction.y, direction.x)/(2.0*PI);
+    float v = 0.5 + asin(direction.z)/PI;
 
-	return vec2(u, v);
+    return vec2(u, v);
 }
 
 float aspect_ratio = resolution.x / resolution.y;
@@ -95,36 +95,36 @@ void main()
 
     vec3 unit_camera_origin = normalize(camera_origin);
     float alpha = UnitVectorAngle(-unit_camera_origin, ray_direction);
-	vec3 axis_rotation = normalize(cross(-unit_camera_origin, ray_direction));
+    vec3 axis_rotation = normalize(cross(-unit_camera_origin, ray_direction));
 
     vec4 px_color = vec4(0,0,0,1);
 
     // Trace geodesic
     float phi = 0.0;
-	float u = distance_inverse;
-	float du = distance_inverse / tan(alpha);
-	float d2u;
+    float u = distance_inverse;
+    float du = distance_inverse / tan(alpha);
+    float d2u;
     vec3 final_direction;
-		
+
     for (int i = 0; i < MAX_ITER; i++)
     {
         d2u = 1.5*bh_radius*u*u - u;
-		du += d2u * DELTA;
+        du += d2u * DELTA;
         u += du * DELTA;
-        phi += DELTA; 
+        phi += DELTA;
 
         final_direction = RotateByAxis(unit_camera_origin, axis_rotation, phi) / u;
 
         // Ray escapes to infinity
         if (u < inverse_sky_distance)
         {
-		    vec2 sphere_uv = sphereUV(final_direction);
-		    px_color = gridTexture(sphere_uv, vec2(92.0, 92.0*0.5), white, pink);
+            vec2 sphere_uv = sphereUV(final_direction);
+            px_color = gridTexture(sphere_uv, vec2(92.0, 92.0*0.5), white, pink);
             break;
         }
         // Ray falls to disk
-		if (abs(final_direction.z) < 0.5 && u < inverse_inner_radius && u > inverse_outer_radius)
-		{
+        if (abs(final_direction.z) < 0.5 && u < inverse_inner_radius && u > inverse_outer_radius)
+        {
             if ((abs(u-inverse_inner_radius) < 0.0001 || abs(u-inverse_outer_radius)<0.0001) && (abs(final_direction.z-0.5) < 0.1 || abs(final_direction.z+0.5) < 0.1))
                 px_color = vec4(0.9,0.2,0.1,1);
             else
@@ -132,14 +132,14 @@ void main()
                 vec2 disk_uv = diskUV(final_direction, 60.0, 15.0);
                 px_color = gridTexture(disk_uv, vec2(4,26), vec4(1,0.8,0,1), vec4(1,0.4,0.1,1));
             }
-			break;
-		}
+            break;
+        }
         // Ray falls to black hole
         if (u > bh_inverse_radius)
-		{
+        {
             px_color = vec4(0,0,0,1);
-			break;
-		}
+            break;
+        }
     }
     imageStore(img_output, pixelCoord, px_color);
 }
