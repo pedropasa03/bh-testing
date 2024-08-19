@@ -53,6 +53,12 @@ float VectorAngle(vec3 vector1, vec3 vector2)
 	return acos(dot(vector1, vector2) / (length(vector1)*length(vector2)));
 }
 
+/*Calculate angle between two unit vectors*/
+float UnitaryVectorAngle(vec3 vector1, vec3 vector2)
+{
+	return acos(dot(vector1, vector2));
+}
+
 vec2 diskUV(vec3 point, float outer_radius, float inner_radius)
 {
     return vec2((length(point.xy)-inner_radius)/(outer_radius - inner_radius), 0.5 + atan(point.y, point.x)/(2.0*PI));
@@ -87,8 +93,9 @@ void main()
     vec2 uv = vec2(pixelCoord) / resolution;
     vec3 ray_direction = shootRay(uv);
 
-    float alpha = VectorAngle(-camera_origin, ray_direction);
-	vec3 axis_rotation = normalize(cross(-camera_origin, ray_direction));
+    vec3 unit_camera_origin = normalize(camera_origin);
+    float alpha = UnitaryVectorAngle(-unit_camera_origin, ray_direction);
+	vec3 axis_rotation = normalize(cross(-unit_camera_origin, ray_direction));
 
     vec4 px_color = vec4(0,0,0,1);
 
@@ -106,7 +113,7 @@ void main()
         u += du * DELTA;
         phi += DELTA; 
 
-        final_direction = normalize(RotateByAxis(camera_origin, axis_rotation, phi)) / u;
+        final_direction = RotateByAxis(unit_camera_origin, axis_rotation, phi) / u;
 
         // Ray escapes to infinity
         if (u < inverse_sky_distance)
