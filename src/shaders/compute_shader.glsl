@@ -54,7 +54,7 @@ float VectorAngle(vec3 vector1, vec3 vector2)
 }
 
 /*Calculate angle between two unit vectors*/
-float UnitaryVectorAngle(vec3 vector1, vec3 vector2)
+float UnitVectorAngle(vec3 vector1, vec3 vector2)
 {
 	return acos(dot(vector1, vector2));
 }
@@ -94,7 +94,7 @@ void main()
     vec3 ray_direction = shootRay(uv);
 
     vec3 unit_camera_origin = normalize(camera_origin);
-    float alpha = UnitaryVectorAngle(-unit_camera_origin, ray_direction);
+    float alpha = UnitVectorAngle(-unit_camera_origin, ray_direction);
 	vec3 axis_rotation = normalize(cross(-unit_camera_origin, ray_direction));
 
     vec4 px_color = vec4(0,0,0,1);
