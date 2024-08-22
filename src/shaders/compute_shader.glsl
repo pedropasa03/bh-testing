@@ -1,4 +1,4 @@
-#version 430
+#version 430 core
 
 layout(local_size_x = 30, local_size_y = 30) in;
 layout(binding = 0, rgba32f) uniform image2D img_output;
@@ -9,35 +9,28 @@ layout(binding = 0, rgba32f) uniform image2D img_output;
 // ------------------------------- UNIFORMS ------------------------------- //
 uniform float camera_distance;
 uniform vec3  camera_origin;
-uniform bool  camera_type;
 uniform float focal_length;
 uniform vec2  resolution;
 uniform mat3  rotation_matrix;
-uniform bool  show_ring;
+
+// Textures
+layout(binding = 1, rgba32f) uniform sampler2D disk_texture;
+layout(binding = 2, rgba32f) uniform sampler2D background_texture;
 
 // Scene settings
-const float DELTA = 0.001;
-const float inverse_sky_distance = 1.0 / 1e10;
-const float inverse_inner_radius = 1.0 / 15.0;
-const float inverse_outer_radius = 1.0 / 50.0;
-const vec3 disk_normal = vec3(0, 0, 1);
+const float DELTA = 0.0005;
+const float disk_inner_radius = -15.0;
+const float disk_outer_radius = -50.0;
 const float bh_radius = 5.0;
+
+// Calculate inverses
+const float inverse_sky_distance = 1.0 / 1e10;
+const float inverse_inner_radius = 1.0 / disk_inner_radius;
+const float inverse_outer_radius = 1.0 / disk_outer_radius;
 const float bh_inverse_radius = 1.0 / bh_radius;
 float distance_inverse = 1.0 / camera_distance;
 
-// Colors
-#define white vec4(1,1,1,1)
-#define pink vec4(1, 0.6823, 0.7882, 1)
-
 // ------------------------------- FUNCTIONS ------------------------------- //
-vec4 gridTexture(vec2 uv, vec2 num, vec4 color1, vec4 color2)
-{
-    int i = int(num.x*uv.x) % int(num.x+1.0);
-    int j = int(num.y*uv.y) % int(num.y+1.0);
-    
-    return ((i + j) % 2 == 0) ? color1 : color2;
-}
-
 /*
 Rodrigues' rotation formula.
 If v is a vector in R^3 and e is a unit vector rooted at the origin describing an axis
@@ -59,9 +52,9 @@ float UnitVectorAngle(vec3 vector1, vec3 vector2)
     return acos(dot(vector1, vector2));
 }
 
-vec2 diskUV(vec3 point, float outer_radius, float inner_radius)
+vec2 diskUV(vec3 point, float inner_radius, float outer_radius)
 {
-    return vec2((length(point.xy)-inner_radius)/(outer_radius - inner_radius), 0.5 + atan(point.y, point.x)/(2.0*PI));
+    return vec2((length(point.xy)-inner_radius)/(outer_radius-inner_radius), 0.5 + atan(point.y, point.x)/(2.0*PI));
 }
 
 vec2 sphereUV(vec3 direction)
@@ -119,7 +112,7 @@ void main()
         if (u < inverse_sky_distance)
         {
             vec2 sphere_uv = sphereUV(final_direction);
-            px_color = gridTexture(sphere_uv, vec2(92.0, 92.0*0.5), white, pink);
+            px_color = texture(background_texture, sphere_uv);
             break;
         }
         // Ray falls to disk
@@ -129,8 +122,8 @@ void main()
                 px_color = vec4(0.9,0.2,0.1,1);
             else
             {
-                vec2 disk_uv = diskUV(final_direction, 60.0, 15.0);
-                px_color = gridTexture(disk_uv, vec2(4,26), vec4(1,0.8,0,1), vec4(1,0.4,0.1,1));
+                vec2 disk_uv = diskUV(final_direction, disk_inner_radius, disk_outer_radius);
+                px_color = texture(disk_texture, disk_uv);
             }
             break;
         }

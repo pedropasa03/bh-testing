@@ -17,6 +17,20 @@ def rotate_z(angle):
         [0, 0, 1]
     ])
 
+def load_image(context, image, channel):
+    image_data = image.convert("RGBA").tobytes()  # Get the image data as bytes
+    texture = context.texture(image.size, 4, image_data)
+    texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
+    texture.use(channel)
+
+def convert_PIL_image(output_texture, size):
+    data = output_texture.read()
+    image = np.frombuffer(data, dtype=np.float32).reshape((size[1], size[0], 4))
+
+    total_image = np.clip(image * 255, 0, 255).astype(np.uint8)
+    pil_image = Image.fromarray(total_image)
+    return pil_image
+
 ctx = moderngl.create_context(standalone=True)
 
 # Load and compile the compute shader
@@ -32,6 +46,13 @@ size = (1920, 1080)
 output_texture = ctx.texture(size, 4, dtype='f4')
 output_texture.bind_to_image(0, read=True, write=True)
 
+# Load the disk image
+disk_texture = Image.open("assets/disk.png").convert("RGBA")
+bg_texture = Image.open("assets/bg1.png").convert("RGBA")
+
+load_image(ctx, disk_texture, 1)
+load_image(ctx, bg_texture, 2)
+
 # Camera settings - MODIFY THIS
 """
 camera_center es el origen de la camara.
@@ -40,7 +61,7 @@ alrededor del agujero negro.
 Puedes poner el centro donde quieras (ver ejemplo del comentario) para generar
 una imagen no centrada.
 """
-angle_y = -5*DEGREES
+angle_y = 0*DEGREES
 angle_z = 0*DEGREES
 rotation_matrix = np.dot(rotate_y(angle_y),rotate_z(angle_z))
 camera_center =  np.dot(np.linalg.inv(rotation_matrix), np.array([-100.0, 0.0, 0.0])) #np.array([-150.0, -60.0, 10.0])
@@ -56,14 +77,8 @@ compute_shader['focal_length'].value = focal_length
 # Run the compute shader
 compute_shader.run(size[0] // 30, size[1] // 30)
 
-# Now, output_texture contains the result, which is used to save as an image
-data = output_texture.read()
-image = np.frombuffer(data, dtype=np.float32).reshape((size[1], size[0], 4))
-
-# Convert to 8-bit per channel and create a PIL image
-total_image = np.clip(image * 255, 0, 255).astype(np.uint8)
-pil_image = Image.fromarray(total_image)
+pil_image = convert_PIL_image(output_texture, size)
 
 # Save the image using PIL
-pil_image.save(f'out.png')
+pil_image.save(f'out_small.png')
 pil_image.show()
