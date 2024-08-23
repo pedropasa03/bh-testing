@@ -153,7 +153,7 @@ class Scene:
         # Initiate
         self.ctx = moderngl.create_context(standalone=True)
 
-        compute_shader_source = open("src/shaders/compute_shader.glsl").read()
+        compute_shader_source = open("shaders/compute_shader.glsl").read()
         self.compute_shader = self.ctx.compute_shader(compute_shader_source)
 
     def set_uniform(self, u_name, u_value):
@@ -173,7 +173,7 @@ class Scene:
         ## Set uniform values ##
         # Scene uniforms
         self.set_uniform('show_disk', self.show_disk) 
-        self.load_texture(self.background_texture, True, 1)
+        self.load_texture(self.background_texture, False, 1)
 
         # Camera uniforms
         self.set_uniform('camera_origin', self.camera.origin)
@@ -182,10 +182,11 @@ class Scene:
         self.set_uniform('focal_length', self.camera.focal_length)
 
         # Disk uniforms
-        self.set_uniform('disk_inner_radius', self.disk.inner_radius)
-        self.set_uniform('disk_outer_radius', self.disk.outer_radius)
-        self.set_uniform('disk_half_thickness', 0.5*self.disk.thickness)
-        self.load_texture(self.disk.texture, True, 2)
+        if (self.show_disk):
+            self.set_uniform('disk_inner_radius', self.disk.inner_radius)
+            self.set_uniform('disk_outer_radius', self.disk.outer_radius)
+            self.set_uniform('disk_half_thickness', 0.5*self.disk.thickness)
+            self.load_texture(self.disk.texture, True, 2)
 
         # Black hole uniforms
         self.set_uniform('bh_radius', self.black_hole.radius)
