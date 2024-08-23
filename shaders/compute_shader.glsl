@@ -1,34 +1,33 @@
 #version 430 core
 
+// Constants
+const float PI = 3.14159265358979323846;
+
+// Scene settings
+const float DELTA = 0.001;
+const int MAX_ITER = 100000;
+
+// Output texture
 layout(local_size_x = 30, local_size_y = 30) in;
 layout(binding = 0, rgba32f) uniform image2D img_output;
 
-// ------------------------------- CONSTANTS ------------------------------- //
-#define PI 3.14159265359
-
-// ------------------------------- UNIFORMS ------------------------------- //
-// Scene uniforms
-layout(binding = 1, rgba32f) uniform sampler2D background_texture;
+// Uniforms
 uniform bool show_disk;
 
-// Camera uniforms
 uniform vec3  camera_origin;
 uniform float focal_length;
 uniform vec2  resolution;
 uniform mat3  rotation_matrix;
 
-// Disk uniforms
-layout(binding = 2, rgba32f) uniform sampler2D disk_texture;
 uniform float disk_inner_radius;
 uniform float disk_outer_radius;
 uniform float disk_half_thickness;
 
-// Black hole uniforms
 uniform float bh_radius;
 
-// Scene settings
-const float DELTA = 0.0005;
-const int MAX_ITER = 100000;
+// External textures
+layout(binding = 1, rgba32f) uniform sampler2D background_texture;
+layout(binding = 2, rgba32f) uniform sampler2D disk_texture;
 
 // Calculate inverses
 float inverse_sky_distance = 1.0 / 1e10;
@@ -37,12 +36,8 @@ float bh_inverse_radius = 1.0 / bh_radius;
 float inverse_inner_radius = 1.0 / disk_inner_radius;
 float inverse_outer_radius = 1.0 / disk_outer_radius;
 
-// ------------------------------- FUNCTIONS ------------------------------- //
-/*
-Rodrigues' rotation formula.
-If v is a vector in R^3 and e is a unit vector rooted at the origin describing an axis
-of rotation about which v is rotated by an angle θ.
-*/
+
+// Functions
 vec3 RotateByAxis(vec3 vector, vec3 axis_rotation, float theta)
 {
     return vector * cos(theta) + cross(axis_rotation, vector) * sin(theta) + axis_rotation * (1.0-cos(theta)) * dot(axis_rotation, vector);
@@ -59,12 +54,12 @@ float UnitVectorAngle(vec3 vector1, vec3 vector2)
     return acos(dot(vector1, vector2));
 }
 
-vec2 diskUV(vec3 point, float inner_radius, float outer_radius)
+vec2 DiskUV(vec3 point, float inner_radius, float outer_radius)
 {
     return vec2((length(point.xy)-inner_radius)/(outer_radius-inner_radius), 0.5 + atan(point.y, point.x)/(2.0*PI));
 }
 
-vec2 sphereUV(vec3 direction)
+vec2 SphereUV(vec3 direction)
 {
     direction = normalize(direction);
     float u = 0.5 + atan(direction.y, direction.x)/(2.0*PI);
@@ -74,7 +69,7 @@ vec2 sphereUV(vec3 direction)
 }
 
 float aspect_ratio = resolution.x / resolution.y;
-vec3 shootRay(vec2 uv)
+vec3 ShootRay(vec2 uv)
 {
     uv = 2.0*uv - 1.0;
     uv.y /= aspect_ratio;
@@ -88,7 +83,7 @@ void main()
 {
     ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
     vec2 uv = vec2(pixelCoord) / resolution;
-    vec3 ray_direction = shootRay(uv);
+    vec3 ray_direction = ShootRay(uv);
 
     vec3 unit_camera_origin = normalize(camera_origin);
     float alpha = UnitVectorAngle(-unit_camera_origin, ray_direction);
@@ -115,7 +110,7 @@ void main()
         // Ray escapes to infinity
         if (u < inverse_sky_distance)
         {
-            vec2 sphere_uv = sphereUV(final_direction);
+            vec2 sphere_uv = SphereUV(final_direction);
             px_color = texture(background_texture, sphere_uv);
             break;
         }
@@ -128,7 +123,7 @@ void main()
                     px_color = vec4(0.9,0.2,0.1,1);
                 else
                 {
-                    vec2 disk_uv = diskUV(final_direction, disk_inner_radius, disk_outer_radius);
+                    vec2 disk_uv = DiskUV(final_direction, disk_inner_radius, disk_outer_radius);
                     px_color = texture(disk_texture, disk_uv);
                 }
                 break;
