@@ -17,6 +17,9 @@ Feel free to explore the [examples](examples) folder for more visualizations.
 
 ### How to install
 
+> [!WARNING]
+> This is steps are deprecated. New instructions are WIP.
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/pedropasa03/bh-testing.git
@@ -31,6 +34,10 @@ Feel free to explore the [examples](examples) folder for more visualizations.
 And everything will be up and running.
 
 ### How to generate images
+
+> [!WARNING]
+> This is steps are deprecated. New instructions are WIP.
+
 In the folder `tests` you can find a test file that will produce an image if executed.
 
 ```bash
