@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "bh-testing"
+name = "bh_testing"
 version = "0.1.0"
 description = "An Schwartzschild black hole image generator."
 authors = ["pedropasa03"]
