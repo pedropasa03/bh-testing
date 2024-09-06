@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from PIL import Image
+import moderngl
 
 
 @dataclass
@@ -25,11 +26,14 @@ class Texture:
     """
     image_path: str | Path
 
-    def get_texture(self) -> Image:
+    def get_texture(self, ctx: moderngl.Context) -> moderngl.Texture:
         """
         Returns a PIL Image object from the texture image path.
         """
-        return Image.open(self.image_path)
+        image = Image.open(self.image_path)
+        image_data = image.convert("RGBA").tobytes()
+
+        return ctx.texture(image.size, 4, image_data)
 
 
 PINK_BG = Texture("assets/pink_bg.png")
