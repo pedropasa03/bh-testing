@@ -16,6 +16,12 @@ def rotate_z(angle):
         [0, 0, 1]
     ])
 
+def rotation_matrix(angle_y, angle_z):
+    return np.dot(
+        rotate_y(angle_y),
+        rotate_z(angle_z)
+    )
+
 def to_PIL_image(output_texture, size):
     data = output_texture.read()
     image = np.frombuffer(data, dtype=np.float32).reshape((size[1], size[0], 4))
