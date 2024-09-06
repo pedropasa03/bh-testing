@@ -18,8 +18,10 @@ class Texture:
     You can create a custom texture by subclassing this class and
     implementing the `get_texture` method.
 
-    Attributes:
-        image_path: Path to the texture image.
+    Attributes
+    ----------
+    image_path: str | Path
+        Path to the texture image.
     """
     image_path: str | Path
 
