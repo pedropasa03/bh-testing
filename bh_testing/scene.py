@@ -95,7 +95,7 @@ class BlackHoleScene(Scene):
         super().__post_init__()
         computer_shader_source = get_shader("black_hole.glsl").read_text()
 
-        self.ctx.compute_shader(computer_shader_source)
+        self.computer_shader = self.ctx.compute_shader(computer_shader_source)
 
     def render(self) -> Image.Image:
         """
