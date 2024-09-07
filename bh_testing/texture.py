@@ -28,9 +28,10 @@ class Texture:
     """
     image_path: str | Path
 
-    def get_texture(self, ctx: moderngl.Context) -> moderngl.Texture:
+    def add_texture(self, ctx: moderngl.Context) -> moderngl.Texture:
         """
-        Returns a PIL Image object from the texture image path.
+        Add the texture to the context and return the resulting
+        `moderngl.Texture` object.
         """
         image = Image.open(self.image_path)
         image_data = image.convert("RGBA").tobytes()
