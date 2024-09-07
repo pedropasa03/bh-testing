@@ -33,7 +33,7 @@ class Scene:
     camera: Camera
     background_texture: Texture
     ctx: moderngl.Context = field(init=False)
-    computer_shader: moderngl.ComputeShader = field(init=False)
+    compute_shader: moderngl.ComputeShader = field(init=False)
 
     def __post_init__(self):
         self.ctx = moderngl.create_context(standalone=True)
@@ -51,7 +51,7 @@ class Scene:
             The value of the uniform.
         """
         try:
-            self.computer_shader[u_name] = u_value
+            self.compute_shader[u_name] = u_value
         except KeyError:
             raise ValueError(f"Uniform {u_name} not found in the compute shader")
 
@@ -93,9 +93,9 @@ class BlackHoleScene(Scene):
     """
     def __post_init__(self):
         super().__post_init__()
-        computer_shader_source = get_shader("black_hole.glsl").read_text()
+        compute_shader_source = get_shader("black_hole.glsl").read_text()
 
-        self.computer_shader = self.ctx.compute_shader(computer_shader_source)
+        self.compute_shader = self.ctx.compute_shader(compute_shader_source)
 
     def render(self) -> Image.Image:
         """
@@ -108,7 +108,7 @@ class BlackHoleScene(Scene):
         """
         # Scene uniforms
         self.set_uniform('show_disk', self.black_hole.has_disk()) 
-        self.load_texture(self.background_texture, False, 1)
+        self.load_texture(self.background_texture, True, 1)
 
         # Camera uniforms
         self.set_uniform('camera_origin', self.camera.origin)
