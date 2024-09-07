@@ -2,10 +2,6 @@
 This modules contains a sample `main` function to render some example
 images.
 """
-"""
-This modules contains a sample `main` function to render some example
-images.
-"""
 from bh_testing import *
 
 def main():
@@ -14,17 +10,17 @@ def main():
         inner_radius=15.0,
         outer_radius=40.0,
         thickness=1.0,
-        texture=ORANGE_DISK
+        texture=None
     )
 
     camera = Camera(
-        resolution=[1000,1000],
+        resolution=[2000,2000],
         angle_y=0,
         angle_z=0,
         focal_length=1,
-        origin=[-100.0, 0.0, 0.0]
+        origin=[-50.0, 0.0, 0.0]
     )
-    scene = BlackHoleScene(bh,camera, PINK_BG)
+    scene = BlackHoleScene(bh,camera, LINES_BG)
 
     img = scene.render()
     img.show()

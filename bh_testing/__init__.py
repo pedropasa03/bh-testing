@@ -3,6 +3,7 @@ __all__ = [
     "PINK_BG",
     "MULTICOLOR_BG",
     "ORIENTED_BG",
+    "LINES_BG",
     "ORANGE_DISK",
     "BlackHole",
     "Camera",
@@ -10,7 +11,7 @@ __all__ = [
     "BlackHoleScene",
 ]
 
-from .texture import Texture, PINK_BG, MULTICOLOR_BG, ORIENTED_BG, ORANGE_DISK
+from .texture import Texture, PINK_BG, MULTICOLOR_BG, ORIENTED_BG, LINES_BG, ORANGE_DISK
 from .black_hole import BlackHole
 from .camera import Camera
 from .scene import Scene, BlackHoleScene

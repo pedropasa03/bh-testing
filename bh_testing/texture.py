@@ -51,6 +51,10 @@ ORIENTED_BG = Texture(get_asset("oriented_bg.png"))
 """
 Texture object for an oriented (and multicolor) background.
 """
+LINES_BG = Texture(get_asset("lines_bg.png"))
+"""
+Texture object for a multicolor grid with white lines.
+"""
 ORANGE_DISK = Texture(get_asset("orange_disk.png"))
 """
 Texture object for an orange disk.
