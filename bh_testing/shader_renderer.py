@@ -11,7 +11,7 @@ from pathlib import Path
 import moderngl
 from PIL import Image
 
-from ._utils import to_PIL_image
+from ._utils import to_PIL_image, get_shader
 from .texture import Texture
 from .black_hole import BlackHole
 from .camera import Camera
@@ -136,7 +136,7 @@ class BlackHoleRenderer(ShaderRenderer):
     A subclass of `ShaderRenderer` to render a black hole scene.
     """
     def __init__(self):
-        super().from_file("shaders/black_hole.glsl")
+        super().from_file(get_shader("black_hole.glsl"))
 
     def render(
         self,

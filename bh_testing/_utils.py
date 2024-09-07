@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 from PIL import Image
 
@@ -30,3 +32,9 @@ def to_PIL_image(output_texture, size) -> Image.Image:
     total_image = np.clip(image * 255, 0, 255).astype(np.uint8)
     pil_image = Image.fromarray(total_image)
     return pil_image
+
+def get_asset(asset_name: str) -> Path:
+    return Path(__file__).parent / "assets" / asset_name
+
+def get_shader(shader_name: str) -> Path:
+    return Path(__file__).parent / "shaders" / shader_name

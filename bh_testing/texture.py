@@ -10,6 +10,8 @@ from pathlib import Path
 from PIL import Image
 import moderngl
 
+from ._utils import get_asset
+
 
 @dataclass
 class Texture:
@@ -36,19 +38,19 @@ class Texture:
         return ctx.texture(image.size, 4, image_data)
 
 
-PINK_BG = Texture("assets/pink_bg.png")
+PINK_BG = Texture(get_asset("pink_bg.png"))
 """
 Texture object for a pink background.
 """
-MULTICOLOR_BG = Texture("assets/multicolor_bg.png")
+MULTICOLOR_BG = Texture(get_asset("multicolor_bg.png"))
 """
 Texture object for a multicolor background.
 """
-ORIENTED_BG = Texture("assets/oriented_bg.png")
+ORIENTED_BG = Texture(get_asset("oriented_bg.png"))
 """
 Texture object for an oriented (and multicolor) background.
 """
-ORANGE_DISK = Texture("assets/orange_disk.png")
+ORANGE_DISK = Texture(get_asset("orange_disk.png"))
 """
 Texture object for an orange disk.
 """
