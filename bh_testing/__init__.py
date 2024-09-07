@@ -6,14 +6,11 @@ __all__ = [
     "ORANGE_DISK",
     "BlackHole",
     "Camera",
-    "ShaderRenderer",
-    "BlackHoleRenderer",
     "Scene",
+    "BlackHoleScene",
 ]
 
 from .texture import Texture, PINK_BG, MULTICOLOR_BG, ORIENTED_BG, ORANGE_DISK
 from .black_hole import BlackHole
 from .camera import Camera
-from .shader_renderer import ShaderRenderer, BlackHoleRenderer
-from .scene import Scene
-
+from .scene import Scene, BlackHoleScene
