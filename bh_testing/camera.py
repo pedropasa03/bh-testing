@@ -47,7 +47,7 @@ class Camera:
         resolution: np.ndarray,
         angle_y: float,
         angle_z: float,
-        focal_lenght: float,
+        focal_length: float,
         camera_distance: float,
     ):
         inv_rotation_matrix = np.linalg.inv(rotation_matrix(angle_y, angle_z))
@@ -60,6 +60,6 @@ class Camera:
             resolution=resolution,
             angle_y=angle_y,
             angle_z=angle_z,
-            focal_length=focal_lenght,
+            focal_length=focal_length,
             origin=origin,
         )
