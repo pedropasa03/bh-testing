@@ -23,7 +23,7 @@ def main():
         focal_length=1,
         origin=[-50.0, 0.0, 0.0]
     )
-    scene = BlackHoleScene(bh,camera, LINES_BG)
+    scene = BlackHoleScene(bh, camera, LINES_BG)
 
     img = scene.render()
     img.save("examples/front.png")
@@ -43,7 +43,7 @@ def main():
         focal_length=1,
         camera_distance=100.0
     )
-    scene = BlackHoleScene(bh,camera, PINK_BG)
+    scene = BlackHoleScene(bh, camera, PINK_BG)
 
     img = scene.render()
     img.save("examples/disk.png")
@@ -63,7 +63,7 @@ def main():
         focal_length=40,
         origin=[-5500.0, -55.0, 220.0]
     )
-    scene = BlackHoleScene(bh,camera, ORIENTED_BG)
+    scene = BlackHoleScene(bh, camera, ORIENTED_BG)
 
     img = scene.render()
     img.save("examples/not_centered.png")
@@ -83,7 +83,7 @@ def main():
         focal_length=40,
         camera_distance=6000
     )
-    scene = BlackHoleScene(bh,camera, MULTICOLOR_BG)
+    scene = BlackHoleScene(bh, camera, MULTICOLOR_BG)
 
     img = scene.render()
     img.save("examples/fov.png")
