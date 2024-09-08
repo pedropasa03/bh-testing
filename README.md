@@ -10,10 +10,8 @@ Here are some examples of the kind of images this project generates:
 
 <img src="examples/front.png" alt="Example Image" width="600"/>
 
-<img src="examples/disk.png" alt="Example Image" width="600"/>
-
 ![Example Image](examples/disk.png)
-![Example Image](examples/front.png)
+
 
 Feel free to explore the [examples](examples) folder for more visualizations.
 
