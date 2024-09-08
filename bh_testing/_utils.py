@@ -4,21 +4,21 @@ import numpy as np
 from PIL import Image
 
 
-def rotate_y(angle) -> np.ndarray:
+def rotate_y(angle: float) -> np.ndarray:
     return np.array([
         [np.cos(angle), 0, np.sin(angle)],
         [0, 1, 0],
         [-np.sin(angle), 0, np.cos(angle)]
     ])
 
-def rotate_z(angle) -> np.ndarray:
+def rotate_z(angle: float) -> np.ndarray:
     return np.array([
         [np.cos(angle), -np.sin(angle), 0],
         [np.sin(angle), np.cos(angle), 0],
         [0, 0, 1]
     ])
 
-def rotation_matrix(angle_y, angle_z) -> np.ndarray:
+def rotation_matrix(angle_y: float, angle_z: float) -> np.ndarray:
     return np.dot(
         rotate_y(angle_y),
         rotate_z(angle_z)
