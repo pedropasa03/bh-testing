@@ -4,11 +4,11 @@
 const float PI = 3.14159265358979323846;
 
 // Scene settings
-const float DELTA = 0.001;
+const float DELTA = 0.0005;
 const int MAX_ITER = 100000;
 
 // Output texture
-layout(local_size_x = 30, local_size_y = 30) in;
+layout(local_size_x = 32, local_size_y = 32) in;
 layout(binding = 0, rgba32f) uniform image2D img_output;
 
 // Uniforms

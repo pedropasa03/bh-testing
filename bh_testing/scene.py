@@ -108,7 +108,7 @@ class BlackHoleScene(Scene):
         """
         # Scene uniforms
         self.set_uniform('show_disk', self.black_hole.has_disk()) 
-        self.load_texture(self.background_texture, True, 1)
+        self.load_texture(self.background_texture, False, 1)
 
         # Camera uniforms
         self.set_uniform('camera_origin', self.camera.origin)
@@ -131,7 +131,7 @@ class BlackHoleScene(Scene):
         output_texture.bind_to_image(0, read=False, write=True)
 
         # Run the compute shader
-        self.compute_shader.run(self.camera.resolution[0] // 30, self.camera.resolution[1] // 30)
+        self.compute_shader.run(1 + self.camera.resolution[0]//32, 1 + self.camera.resolution[1]//32)
 
         pil_image = to_PIL_image(output_texture, self.camera.resolution)
 
