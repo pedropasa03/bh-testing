@@ -58,7 +58,6 @@ class Scene:
     def load_texture(
         self,
         texture: Texture,
-        nearest: bool,
         channel: int,
     ) -> None:
         """
@@ -69,16 +68,13 @@ class Scene:
         texture : Texture
             The texture to load.
 
-        nearest : bool
-            Whether to use nearest neighbor interpolation.
-
         channel : int
             The channel to load the texture into.
         """
-        texture = texture.add_texture(self.ctx)
-        if nearest:
-            texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
-        texture.use(channel)
+        moderngl_texture = texture.add_texture(self.ctx)
+        if texture.nearest:
+            moderngl_texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
+        moderngl_texture.use(channel)
 
     def render(self) -> Image.Image:
         raise NotImplementedError(
@@ -108,7 +104,7 @@ class BlackHoleScene(Scene):
         """
         # Scene uniforms
         self.set_uniform('show_disk', self.black_hole.has_disk()) 
-        self.load_texture(self.background_texture, False, 1)
+        self.load_texture(self.background_texture, 1)
 
         # Camera uniforms
         self.set_uniform('camera_origin', self.camera.origin)
@@ -121,7 +117,7 @@ class BlackHoleScene(Scene):
             self.set_uniform('disk_inner_radius', self.black_hole.inner_radius)
             self.set_uniform('disk_outer_radius', self.black_hole.outer_radius)
             self.set_uniform('disk_half_thickness', 0.5*self.black_hole.thickness)
-            self.load_texture(self.black_hole.texture, True, 2)
+            self.load_texture(self.black_hole.texture, 2)
 
         # Black hole uniforms
         self.set_uniform('bh_radius', self.black_hole.radius)
