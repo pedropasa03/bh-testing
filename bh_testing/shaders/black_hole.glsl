@@ -26,8 +26,8 @@ uniform float disk_half_thickness;
 uniform float bh_radius;
 
 // External textures
-layout(binding = 1, rgba32f) uniform sampler2D background_texture;
-layout(binding = 2, rgba32f) uniform sampler2D disk_texture;
+layout(binding = 1) uniform sampler2D background_texture;
+layout(binding = 2) uniform sampler2D disk_texture;
 
 // Calculate inverses
 float inverse_sky_distance = 1.0 / 1e10;
