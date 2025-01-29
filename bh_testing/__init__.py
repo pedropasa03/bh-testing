@@ -12,6 +12,6 @@ __all__ = [
 ]
 
 from .texture import Texture, PINK_BG, MULTICOLOR_BG, ORIENTED_BG, LINES_BG, ORANGE_DISK
-from .black_hole import BlackHole
+from .space_time import SpaceTime, SchwarzschildBlackHole, KerrBlackHole
 from .camera import Camera
 from .scene import Scene, BlackHoleScene

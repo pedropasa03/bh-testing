@@ -8,7 +8,8 @@ import moderngl
 from PIL import Image
 
 from ._utils import get_shader, to_PIL_image
-from .black_hole import BlackHole
+from .space_time import SpaceTime, SchwarzschildBlackHole, KerrBlackHole
+from .disk import Disk
 from .camera import Camera
 from .texture import Texture
 
@@ -20,8 +21,11 @@ class Scene:
     
     Attributes
     ----------
-    black_hole : BlackHole
+    space_time : SpaceTime
         The black hole in the center.
+
+    disk : Disk | None
+        The accretion disk around the black hole.
 
     camera : Camera
         The camera from which to render.
@@ -29,7 +33,8 @@ class Scene:
     background_texture : Texture
         The texture that will be projected on the background.
     """
-    black_hole: BlackHole
+    space_time: SpaceTime
+    disk: Disk | None = None
     camera: Camera
     background_texture: Texture
     ctx: moderngl.Context = field(init=False)
