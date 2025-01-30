@@ -5,13 +5,16 @@ __all__ = [
     "ORIENTED_BG",
     "LINES_BG",
     "ORANGE_DISK",
-    "BlackHole",
+    "SpaceTime",
+    "SchwarzschildBlackHole",
+    "KerrBlackHole",
     "Camera",
     "Scene",
-    "BlackHoleScene",
+    "Disk"
 ]
 
 from .texture import Texture, PINK_BG, MULTICOLOR_BG, ORIENTED_BG, LINES_BG, ORANGE_DISK
 from .space_time import SpaceTime, SchwarzschildBlackHole, KerrBlackHole
+from .disk import Disk
 from .camera import Camera
-from .scene import Scene, BlackHoleScene
+from .scene import Scene

@@ -1,31 +1,26 @@
 from bh_testing import *
 import numpy as np
-import gc
 
 DEGREES = np.pi / 180.0
 
-bh = BlackHole(
-    radius=5.0,
-    inner_radius=None,
-    outer_radius=None,
-    thickness=None,
-    texture=None
+bh = SchwarzschildBlackHole(radius=1.0)
+
+disk = Disk(
+    inner_radius=3.0,
+    outer_radius=10.0,
+    thickness=0.1,
+    texture=ORANGE_DISK
 )
-c = np.log(15000) / 100
 
-i=402
-for t in np.linspace(0, 100, 8*60)[402:]:
-    camera = Camera(
-        resolution=np.array([2000, 2000]),
-        angle_y=-10.6429*DEGREES,
-        angle_z=-10.6429*DEGREES,
-        origin=np.array([-50.0, 0.0, 0.0]),
-        focal_length=np.exp(c * t)
-    )
+camera = Camera.orbit(
+    resolution=np.array([2000, 2000]),
+    angle_y=-10*DEGREES,
+    angle_z=0*DEGREES,
+    focal_length=5.0,
+    camera_distance=50.0
+)
 
-    scene = BlackHoleScene(bh,camera, LINES_BG)
+scene = Scene(bh, disk, camera, PINK_BG)
 
-    img = scene.render()
-    img.save(f"renders/render{i}.png")
-
-    i += 1
+img = scene.render()
+img.show()
