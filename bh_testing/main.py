@@ -58,10 +58,10 @@ def main():
     )
     camera = Camera(
         resolution=[1920,1080],
-        angle_y=-2.4*DEGREES,
-        angle_z=0,
-        focal_length=40,
-        origin=[-5500.0, -55.0, 220.0]
+        angle_y=-4*DEGREES,
+        angle_z=0.5*DEGREES,
+        focal_length=5,
+        origin=[-750.0, -55.0, 55.0]
     )
     scene = BlackHoleScene(bh, camera, ORIENTED_BG)
 
