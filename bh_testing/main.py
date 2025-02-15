@@ -9,13 +9,7 @@ DEGREES = np.pi/180.0
 
 def main():
     # Image 1
-    bh = BlackHole(
-        radius=5.0,
-        inner_radius=None,
-        outer_radius=None,
-        thickness=None,
-        texture=None
-    )
+    bh = SchwarzschildBlackHole(radius=5.0)
     camera = Camera(
         resolution=[2000,2000],
         angle_y=0,
@@ -23,14 +17,14 @@ def main():
         focal_length=1,
         origin=[-50.0, 0.0, 0.0]
     )
-    scene = BlackHoleScene(bh, camera, LINES_BG)
+    scene = Scene(space_time=bh, disk=None, camera=camera, background_texture=LINES_BG)
 
     img = scene.render()
     img.save("examples/front.png")
 
     # Image 2
-    bh = BlackHole(
-        radius=5.0,
+    bh = SchwarzschildBlackHole(radius=5.0)
+    disk = Disk(
         inner_radius=15.0,
         outer_radius=40.0,
         thickness=1.0,
@@ -43,14 +37,14 @@ def main():
         focal_length=1,
         camera_distance=100.0
     )
-    scene = BlackHoleScene(bh, camera, PINK_BG)
+    scene = Scene(space_time=bh, disk=disk, camera=camera, background_texture=PINK_BG)
 
     img = scene.render()
     img.save("examples/disk.png")
 
     # Image 3
-    bh = BlackHole(
-        radius=5.0,
+    bh = SchwarzschildBlackHole(radius=5.0)
+    disk = Disk(
         inner_radius=15.0,
         outer_radius=80.0,
         thickness=2.0,
@@ -63,14 +57,14 @@ def main():
         focal_length=5,
         origin=[-750.0, -55.0, 55.0]
     )
-    scene = BlackHoleScene(bh, camera, ORIENTED_BG)
+    scene = Scene(space_time=bh, disk=disk, camera=camera, background_texture=ORIENTED_BG)
 
     img = scene.render()
     img.save("examples/not_centered.png")
 
     # Image 4
-    bh = BlackHole(
-        radius=5.0,
+    bh = SchwarzschildBlackHole(radius=5.0)
+    disk = Disk(
         inner_radius=15.0,
         outer_radius=125.0,
         thickness=1.0,
@@ -83,7 +77,7 @@ def main():
         focal_length=40,
         camera_distance=6000
     )
-    scene = BlackHoleScene(bh, camera, MULTICOLOR_BG)
+    scene = Scene(space_time=bh, disk=disk, camera=camera, background_texture=MULTICOLOR_BG)
 
     img = scene.render()
     img.save("examples/fov.png")
