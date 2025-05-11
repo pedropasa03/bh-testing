@@ -42,7 +42,14 @@ class Scene:
 
     def __post_init__(self):
         self.ctx = moderngl.create_context(standalone=True)
-        compute_shader_source = get_shader("black_hole.glsl").read_text()
+        if self.space_time.is_schwartzchild():
+            compute_shader_source = get_shader("black_hole.glsl").read_text()
+        elif self.space_time.is_kerr():
+            compute_shader_source = get_shader("kerr.glsl").read_text()
+        else:
+            raise NotImplementedError(
+                "This scene is not yet supported."
+            )
         self.compute_shader = self.ctx.compute_shader(compute_shader_source)
 
     def set_uniform(self, u_name, u_value) -> None:
@@ -103,22 +110,49 @@ class Scene:
             # Black hole uniforms
             self.set_uniform('bh_radius', self.space_time.radius)
 
+    def set_kerr_uniforms(self) -> None:
+        #self.set_uniform('show_disk', self.disk is not None) 
+        self.load_texture(self.background_texture, 1)
+
+        # Camera uniforms
+        self.set_uniform('camera_origin', self.camera.origin)
+        self.set_uniform('resolution', self.camera.resolution)
+        self.set_uniform('rotation_matrix', self.camera.rotation_matrix.flatten())
+        self.set_uniform('focal_length', self.camera.focal_length)
+
+        # Disk uniforms
+        if (self.disk is not None):
+            self.set_uniform('disk_inner_radius', self.disk.inner_radius)
+            self.set_uniform('disk_outer_radius', self.disk.outer_radius)
+            self.set_uniform('disk_half_thickness', 0.5*self.disk.thickness)
+            self.load_texture(self.disk.texture, 2)
+
+        # Black hole uniforms
+        self.set_uniform('bh_radius', self.space_time.radius)
+
 
     def render(self) -> Image.Image:
-        if not self.space_time.is_schwartzchild():
+        if self.space_time.is_schwartzchild():
+            self.set_schwartzchild_uniforms()
+
+        elif self.space_time.is_kerr():
+            self.set_kerr_uniforms()
+
+        else:
             raise NotImplementedError(
                 "This scene is not yet supported."
             )
-        else:
-            self.set_schwartzchild_uniforms()
 
-            # Create the output texture
-            output_texture = self.ctx.texture(self.camera.resolution, 4, dtype='f4')
-            output_texture.bind_to_image(0, read=False, write=True)
+        # Create the output texture
+        output_texture = self.ctx.texture(self.camera.resolution, 4, dtype='f4')
+        output_texture.bind_to_image(0, read=False, write=True)
 
-            # Run the compute shader
-            self.compute_shader.run(1 + self.camera.resolution[0]//32, 1 + self.camera.resolution[1]//32)
+        # Run the compute shader
+        self.compute_shader.run(1 + self.camera.resolution[0]//32, 1 + self.camera.resolution[1]//32)
 
-            pil_image = to_PIL_image(output_texture, self.camera.resolution)
+        self.ctx.finish()
+        self.ctx.release()
 
-            return pil_image
+        pil_image = to_PIL_image(output_texture, self.camera.resolution)
+
+        return pil_image

@@ -9,13 +9,13 @@ DEGREES = np.pi/180.0
 
 def main():
     # Image 1
-    bh = SchwarzschildBlackHole(radius=5.0)
+    bh = SchwarzschildBlackHole(radius=2.0)
     camera = Camera(
-        resolution=[2000,2000],
+        resolution=[2048,2048],
         angle_y=0,
         angle_z=0,
-        focal_length=1,
-        origin=[-50.0, 0.0, 0.0]
+        focal_length=1.5,
+        origin=[-40.0, 0.0, 0.0]
     )
     scene = Scene(space_time=bh, disk=None, camera=camera, background_texture=LINES_BG)
 
