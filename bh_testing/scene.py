@@ -2,6 +2,7 @@
 This module contains the `Scene` class, which is used to store the information
 of a scene and render it.
 """
+from ast import Not
 from dataclasses import dataclass, field
 
 import moderngl
@@ -42,8 +43,8 @@ class Scene:
 
     def __post_init__(self):
         self.ctx = moderngl.create_context(standalone=True)
-        if self.space_time.is_schwartzchild():
-            compute_shader_source = get_shader("black_hole.glsl").read_text()
+        if self.space_time.is_schwarzschild():
+            compute_shader_source = get_shader("schwarzschild.glsl").read_text()
         elif self.space_time.is_kerr():
             compute_shader_source = get_shader("kerr.glsl").read_text()
         else:
@@ -90,7 +91,7 @@ class Scene:
             moderngl_texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
         moderngl_texture.use(channel)
 
-    def set_schwartzchild_uniforms(self) -> None:
+    def set_schwarzschild_uniforms(self) -> None:
             self.set_uniform('show_disk', self.disk is not None) 
             self.load_texture(self.background_texture, 1)
 
@@ -122,18 +123,16 @@ class Scene:
 
         # Disk uniforms
         if (self.disk is not None):
-            self.set_uniform('disk_inner_radius', self.disk.inner_radius)
-            self.set_uniform('disk_outer_radius', self.disk.outer_radius)
-            self.set_uniform('disk_half_thickness', 0.5*self.disk.thickness)
-            self.load_texture(self.disk.texture, 2)
+            raise NotImplementedError("Kerr black holes with accretion disks are not yet supported.")
 
         # Black hole uniforms
         self.set_uniform('bh_radius', self.space_time.radius)
+        self.set_uniform('a', self.space_time.spin)
 
 
     def render(self) -> Image.Image:
-        if self.space_time.is_schwartzchild():
-            self.set_schwartzchild_uniforms()
+        if self.space_time.is_schwarzschild():
+            self.set_schwarzschild_uniforms()
 
         elif self.space_time.is_kerr():
             self.set_kerr_uniforms()
@@ -150,9 +149,9 @@ class Scene:
         # Run the compute shader
         self.compute_shader.run(1 + self.camera.resolution[0]//32, 1 + self.camera.resolution[1]//32)
 
+        pil_image = to_PIL_image(output_texture, self.camera.resolution)
+
         self.ctx.finish()
         self.ctx.release()
-
-        pil_image = to_PIL_image(output_texture, self.camera.resolution)
 
         return pil_image

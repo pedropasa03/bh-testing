@@ -1,4 +1,5 @@
 #version 430 core
+precision highp float;  
 
 // Constants
 const float PI = 3.14159265358979323846;
@@ -30,7 +31,7 @@ layout(binding = 1) uniform sampler2D background_texture;
 layout(binding = 2) uniform sampler2D disk_texture;
 
 // Calculate inverses
-float inverse_sky_distance = 1.0 / 1e10;
+float inverse_sky_distance = 1.0 / 1e3;
 float distance_inverse = 1.0 / length(camera_origin);
 float bh_inverse_radius = 1.0 / bh_radius;
 float inverse_inner_radius = 1.0 / disk_inner_radius;
@@ -38,9 +39,17 @@ float inverse_outer_radius = 1.0 / disk_outer_radius;
 
 
 // Functions
-vec3 RotateByAxis(vec3 vector, vec3 axis_rotation, float theta)
+vec3 RotateByAxis(vec3 vector, vec3 axis_rotation, float phi)
 {
-    return vector * cos(theta) + cross(axis_rotation, vector) * sin(theta) + axis_rotation * (1.0-cos(theta)) * dot(axis_rotation, vector);
+    return vector * cos(phi) + cross(axis_rotation, vector) * sin(phi) + axis_rotation * (1.0-cos(phi)) * dot(axis_rotation, vector);
+}
+
+vec3 GetFinalVector(vec3 vector, vec3 axis_rotation, float phi, float u, float du)
+{
+    vec3 d_num = -vector * sin(phi) + cross(axis_rotation, vector) * cos(phi) + axis_rotation * sin(phi) * dot(axis_rotation, vector);
+
+    return ((d_num * u) - (RotateByAxis(vector, axis_rotation, phi) * du / u)) / (u * u);
+
 }
 
 float VectorAngle(vec3 vector1, vec3 vector2)
@@ -78,6 +87,16 @@ vec3 ShootRay(vec2 uv)
     return rotation_matrix * ray_direction;
 }
 
+vec2 schwarzschild(vec2 y)
+{
+    float u = y.x;
+    float du = y.y;
+
+    float d2u = 1.5*bh_radius*u*u - u;
+
+    return vec2(du, d2u);
+}
+
 // ------------------------------- MAIN ------------------------------- //
 void main()
 {
@@ -93,23 +112,30 @@ void main()
 
     // Trace geodesic
     float phi = 0.0;
-    float u = distance_inverse;
-    float du = distance_inverse / tan(alpha);
-    float d2u;
+    vec2 y    = vec2(distance_inverse, distance_inverse / tan(alpha));
+
     vec3 final_direction;
 
     for (int i = 0; i < MAX_ITER; i++)
     {
-        d2u = 1.5*bh_radius*u*u - u;
-        du += d2u * DELTA;
-        u += du * DELTA;
+        vec2 k1 = DELTA * schwarzschild(y);
+        vec2 k2 = DELTA * schwarzschild(y + 0.5 * k1);
+        vec2 k3 = DELTA * schwarzschild(y + 0.5 * k2);
+        vec2 k4 = DELTA * schwarzschild(y + k3);
+        
+        y += (k1 + 2.0 * (k2 + k3) + k4) / 6.0;
         phi += DELTA;
+
+        float u = y[0];
+        float du = y[1];
 
         final_direction = RotateByAxis(unit_camera_origin, axis_rotation, phi) / u;
 
         // Ray escapes to infinity
         if (u < inverse_sky_distance)
         {
+            final_direction = GetFinalVector(unit_camera_origin, axis_rotation, phi, u, du);
+
             vec2 sphere_uv = SphereUV(final_direction);
             px_color = texture(background_texture, sphere_uv);
             break;
