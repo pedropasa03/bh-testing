@@ -23,13 +23,9 @@ class SpaceTime:
     """
     radius: float
     spin: float
-    hair: float
 
-    def is_schwartzchild(self) -> bool:
-        return self.spin == 0.0 and self.hair == 0.0
-    
-    def is_kerr(self) -> bool:
-        return self.hair == 0.0
+    def is_schwarzschild(self) -> bool:
+        return self.spin == 0.0
 
 
 @dataclass   
@@ -48,7 +44,12 @@ class SchwarzschildBlackHole(SpaceTime):
 
     def __post_init__(self):
         self.spin = 0.0
-        self.hair = 0.0
+
+    def is_schwarzschild(self) -> bool:
+        return True
+    
+    def is_kerr(self) -> bool:
+        return False
 
 
 
@@ -67,7 +68,9 @@ class KerrBlackHole(SpaceTime):
     """
     radius: float
     spin: float
-    hair: float = field(init=False)
 
-    def __post_init__(self):
-        self.hair = 0.0
+    def is_schwarzschild(self) -> bool:
+        return self.spin == 0.0
+    
+    def is_kerr(self) -> bool:
+        return self.spin != 0.0
